@@ -202,7 +202,7 @@ fun EditScreen(st: AppState, id: String?) {
                 COLORS.forEach { col ->
                     Box(
                         Modifier.size(40.dp).clip(CircleShape).background(cardBrush(col))
-                            .border(if (col == color) 3.dp else 1.dp, if (col == color) Color.White else Line, CircleShape)
+                            .border(if (col == color) 3.dp else 1.dp, if (col == color) TextC else Line, CircleShape)
                             .clickable { color = col; st.haptic("tick") },
                     )
                 }

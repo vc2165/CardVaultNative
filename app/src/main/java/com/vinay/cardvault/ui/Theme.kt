@@ -1,27 +1,28 @@
 package com.vinay.cardvault.ui
 
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateDecay
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-// Same palette as the original Card Vault
-val Bg = Color(0xFF0E1116)
-val Panel = Color(0xFF161A22)
-val Panel2 = Color(0xFF1D222C)
-val Line = Color(0xFF2A303C)
-val TextC = Color(0xFFE8EBF1)
-val Muted = Color(0xFF8B93A3)
-val Accent = Color(0xFF7C5CFF)
-val Accent2 = Color(0xFF22C3A6)
-val Danger = Color(0xFFFF5D6C)
-val Warn = Color(0xFFFFB648)
-val Ok = Color(0xFF3DDC97)
+// Light theme, same family of colours as Ledger
+val Bg = Color(0xFFF7F5FB)
+val Panel = Color(0xFFFFFFFF)
+val Panel2 = Color(0xFFF1EDF8)
+val Line = Color(0xFFDDD7E6)
+val TextC = Color(0xFF1C1B1F)
+val Muted = Color(0xFF5F5B68)
+val Accent = Color(0xFF5B2FC4)
+val Accent2 = Color(0xFF1A9E86)
+val Danger = Color(0xFFD92D3A)
+val Warn = Color(0xFFD98A00)
+val Ok = Color(0xFF16935A)
 
-val Ease = CubicBezierEasing(0.2f, 0.9f, 0.3f, 1f)
+val Ease = CubicBezierEasing(0.2f, 0.8f, 0.2f, 1f)
 
 private val gradients = mapOf(
     "midnight" to (0xFF24345E to 0xFF0B1020),
@@ -44,7 +45,7 @@ fun cardBrush(name: String): Brush {
 @Composable
 fun CardVaultTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = darkColorScheme(
+        colorScheme = lightColorScheme(
             primary = Accent, onPrimary = Color.White,
             secondary = Accent2,
             background = Bg, onBackground = TextC,
@@ -56,4 +57,28 @@ fun CardVaultTheme(content: @Composable () -> Unit) {
         ),
         content = content,
     )
+}
+
+/** Calmer scrolling, same as Ledger: a flick carries the list about half as far and slows sooner. */
+@Composable
+fun rememberCalmFling(): androidx.compose.foundation.gestures.FlingBehavior {
+    val decay = androidx.compose.animation.rememberSplineBasedDecay<Float>()
+    return androidx.compose.runtime.remember(decay) {
+        object : androidx.compose.foundation.gestures.FlingBehavior {
+            override suspend fun androidx.compose.foundation.gestures.ScrollScope.performFling(initialVelocity: Float): Float {
+                val v = initialVelocity * 0.5f
+                if (kotlin.math.abs(v) < 50f) return initialVelocity
+                var left = v
+                var last = 0f
+                androidx.compose.animation.core.AnimationState(0f, v).animateDecay(decay) {
+                    val delta = value - last
+                    val used = scrollBy(delta)
+                    last = value
+                    left = velocity
+                    if (kotlin.math.abs(delta - used) > 0.5f) cancelAnimation()
+                }
+                return left
+            }
+        }
+    }
 }

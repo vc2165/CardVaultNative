@@ -89,6 +89,7 @@ fun HomeScreen(st: AppState) {
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
             Modifier.fillMaxSize(),
+            flingBehavior = rememberCalmFling(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 110.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -164,7 +165,7 @@ private fun Summary(st: AppState) {
     val v = st.vault
     val credit = v.cards.filter { it.type == "credit" }
     if (v.cards.isEmpty()) return
-    Column(Modifier.animateContentSize(tween(250, easing = Ease)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.animateContentSize(tween(380, easing = Ease)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // Stats
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Stat("Credit cards", credit.size.toString(), null, Modifier.weight(1f))

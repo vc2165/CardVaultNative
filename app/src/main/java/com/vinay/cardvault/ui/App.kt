@@ -31,13 +31,13 @@ fun CardVaultApp(st: AppState) {
     Box(Modifier.fillMaxSize().background(Bg)) {
         AnimatedContent(
             targetState = st.session != null,
-            transitionSpec = { fadeIn(tween(260)) togetherWith fadeOut(tween(160)) },
+            transitionSpec = { fadeIn(tween(420, easing = Ease)) togetherWith fadeOut(tween(280)) },
             label = "lock",
         ) { unlocked ->
             if (unlocked) Main(st) else LockScreen(st)
         }
         SnackbarHost(st.snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(bottom = 80.dp)) {
-            Snackbar(it, containerColor = Color(0xFF2A303C), contentColor = TextC)
+            Snackbar(it, containerColor = Color(0xFF2B2930), contentColor = Color.White)
         }
     }
 }
@@ -51,10 +51,10 @@ private fun Main(st: AppState) {
             targetState = Screen(st.stack.size, st.stack.lastOrNull()),
             transitionSpec = {
                 val fwd = targetState.depth > initialState.depth
-                if (fwd) (slideInHorizontally(tween(300, easing = Ease)) { it } + fadeIn(tween(200))) togetherWith
-                    (slideOutHorizontally(tween(300, easing = Ease)) { -it / 5 } + fadeOut(tween(250)))
-                else (slideInHorizontally(tween(300, easing = Ease)) { -it / 5 } + fadeIn(tween(250))) togetherWith
-                    (slideOutHorizontally(tween(260, easing = Ease)) { it } + fadeOut(tween(200)))
+                if (fwd) (slideInHorizontally(tween(440, easing = Ease)) { it } + fadeIn(tween(320))) togetherWith
+                    (slideOutHorizontally(tween(440, easing = Ease)) { -it / 5 } + fadeOut(tween(360)))
+                else (slideInHorizontally(tween(440, easing = Ease)) { -it / 5 } + fadeIn(tween(360))) togetherWith
+                    (slideOutHorizontally(tween(400, easing = Ease)) { it } + fadeOut(tween(320)))
             },
             contentKey = { it.depth.toString() + it.route.toString() },
             label = "nav",
