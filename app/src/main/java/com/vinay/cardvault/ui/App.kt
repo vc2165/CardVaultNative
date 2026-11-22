@@ -117,5 +117,7 @@ private fun RouteScreen(st: AppState, r: Route) {
         Route.Arrange -> ArrangeScreen(st)
         Route.Settings -> SettingsScreen(st)
         Route.ChangePassword -> ChangePasswordScreen(st)
+        Route.CreditCards -> CreditCardsScreen(st)
+        Route.Limits -> LimitsScreen(st)
     }
 }

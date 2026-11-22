@@ -101,6 +101,7 @@ fun HomeScreen(st: AppState) {
                         Text("${v.cards.size} card${if (v.cards.size == 1) "" else "s"} · encrypted on this phone", color = Muted, fontSize = 13.sp)
                     }
                     IconAction(Icons.Outlined.Settings, "Settings") { st.push(Route.Settings) }
+                    Spacer(Modifier.width(8.dp))
                     IconAction(Icons.Outlined.Lock, "Lock") { st.haptic("tap"); st.lock() }
                 }
             }
@@ -169,9 +170,9 @@ private fun Summary(st: AppState) {
     Column(Modifier.animateContentSize(tween(340, easing = Ease)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // Stats
         Row(Modifier.fillMaxWidth().height(androidx.compose.foundation.layout.IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Stat("Credit cards", credit.size.toString(), null, Modifier.weight(1f))
+            Stat("Credit cards", credit.size.toString(), null, Modifier.weight(1f)) { st.push(Route.CreditCards) }
             val lim = v.totalLimit()
-            Stat("Total credit limit", if (lim > 0) inr(lim) else "—", if (credit.any { it.limitGroup != null }) "shared limits counted once" else null, Modifier.weight(1f))
+            Stat("Total credit limit", if (lim > 0) inr(lim) else "—", if (credit.any { it.limitGroup != null }) "shared limits counted once" else null, Modifier.weight(1f)) { st.push(Route.Limits) }
         }
         // Runway
         if (credit.isNotEmpty()) {
@@ -215,7 +216,7 @@ private fun Summary(st: AppState) {
                     Text("Turn on reminders", color = Accent, fontSize = 13.sp)
                 }
             }
-            dues.take(6).forEach { (c, d) ->
+            dues.forEach { (c, d) ->
                 val n = daysUntil(d); val paid = v.isPaid(c, d)
                 Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 9.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
@@ -270,9 +271,9 @@ private fun Summary(st: AppState) {
 }
 
 @Composable
-private fun Stat(k: String, value: String, sub: String?, modifier: Modifier) {
+private fun Stat(k: String, value: String, sub: String?, modifier: Modifier, onClick: () -> Unit) {
     Column(
-        modifier.fillMaxHeight().clip(RoundedCornerShape(16.dp)).background(Panel).border(1.dp, Line, RoundedCornerShape(16.dp)).padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier.fillMaxHeight().clip(RoundedCornerShape(16.dp)).background(Panel).border(1.dp, Line, RoundedCornerShape(16.dp)).clickable(onClick = onClick).padding(horizontal = 14.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         Text(k, color = Muted, fontSize = 12.5.sp, maxLines = 1)

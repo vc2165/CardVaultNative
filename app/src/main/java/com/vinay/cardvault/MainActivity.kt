@@ -55,6 +55,8 @@ sealed interface Route {
     data object Arrange : Route
     data object Settings : Route
     data object ChangePassword : Route
+    data object CreditCards : Route
+    data object Limits : Route
 }
 
 /** Everything the screens need. The vault key exists only while unlocked. */

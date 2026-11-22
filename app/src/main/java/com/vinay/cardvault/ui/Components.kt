@@ -314,9 +314,10 @@ fun ChipButton(text: String, selected: Boolean, modifier: Modifier = Modifier, o
 
 @Composable
 fun IconAction(icon: ImageVector, desc: String, onClick: () -> Unit) {
-    IconButton(onClick = onClick, modifier = Modifier.padding(start = 4.dp).size(42.dp).clip(RoundedCornerShape(12.dp)).background(Panel).border(1.dp, Line, RoundedCornerShape(12.dp))) {
-        Icon(icon, desc, tint = TextC, modifier = Modifier.size(20.dp))
-    }
+    Box(
+        Modifier.size(42.dp).clip(RoundedCornerShape(12.dp)).background(Panel).border(1.dp, Line, RoundedCornerShape(12.dp)).clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) { Icon(icon, desc, tint = TextC, modifier = Modifier.size(20.dp)) }
 }
 
 @Composable
