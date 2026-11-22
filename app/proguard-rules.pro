@@ -1,0 +1,2 @@
+-keep class com.vinay.cardvault.ReminderReceiver
+-keep class com.vinay.cardvault.BootReceiver
