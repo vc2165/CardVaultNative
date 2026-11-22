@@ -1,6 +1,6 @@
 package com.vinay.cardvault.ui
 
-import androidx.activity.compose.PredictiveBackHandler
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.vinay.cardvault.AppState
 import com.vinay.cardvault.Route
 import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun CardVaultApp(st: AppState) {
@@ -59,7 +58,7 @@ private const val CLOSE_MS = 420
 
 /**
  * Screens stack on top of Home like Android's own navigation.
- * A back swipe drags the top screen with your finger; let go and it slides away, or swipe back in to cancel.
+ * Back (swipe or arrow) slides the top screen away to the right.
  */
 @Composable
 private fun Main(st: AppState) {
@@ -79,23 +78,8 @@ private fun Main(st: AppState) {
         onDispose { st.animatedPop = null }
     }
 
-    PredictiveBackHandler(enabled = st.stack.isNotEmpty() && !closing) { events ->
-        val a = offsets[st.stack.lastIndex]
-        try {
-            events.collect { e -> a?.snapTo(e.progress * 0.85f) }
-            if (a != null) {
-                closing = true
-                val left = (1f - a.value).coerceIn(0f, 1f)
-                a.animateTo(1f, tween((CLOSE_MS * left).toInt().coerceAtLeast(180), easing = Ease))
-            }
-            st.popNow()
-            closing = false
-        } catch (e: CancellationException) {
-            closing = false
-            if (a != null) scope.launch { a.animateTo(0f, tween(260, easing = Ease)) }
-            throw e
-        }
-    }
+    // Any back swipe closes the screen straight away (easy to trigger); the screen then slides out smoothly
+    BackHandler(enabled = st.stack.isNotEmpty()) { st.pop() }
 
     Box(Modifier.fillMaxSize()) {
         HomeScreen(st)
