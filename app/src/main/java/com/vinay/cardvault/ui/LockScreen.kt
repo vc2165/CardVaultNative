@@ -145,7 +145,7 @@ fun LockScreen(st: AppState) {
     val btn = when (mode) { "unlock" -> "Unlock"; "create" -> "Create vault"; else -> "Restore backup" }
 
     Column(
-        Modifier.fillMaxSize().systemBarsPadding().imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 28.dp),
+        Modifier.fillMaxSize().systemBarsPadding().imePadding().verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

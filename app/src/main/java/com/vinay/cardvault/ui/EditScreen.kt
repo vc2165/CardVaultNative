@@ -131,7 +131,7 @@ fun EditScreen(st: AppState, id: String?) {
 
     Column(Modifier.fillMaxSize()) {
         TopBar(if (isNew) "Add card" else "Edit card", onBack = { st.pop() })
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).padding(horizontal = 16.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 FormPicker("Type", type, listOf("credit" to "Credit", "debit" to "Debit", "prepaid" to "Prepaid / Forex"), Modifier.weight(1f)) { type = it }
                 FormPicker("Network", network, listOf("" to "Auto-detect") + NETWORKS.filterKeys { it != "other" }.toList() + ("other" to "Other"), Modifier.weight(1f)) { network = it }

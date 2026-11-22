@@ -61,7 +61,7 @@ fun RunwayScreen(st: AppState) {
 
     Column(Modifier.fillMaxSize()) {
         TopBar("Runway", onBack = { st.pop() })
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 16.dp)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).navigationBarsPadding().padding(horizontal = 16.dp)) {
             Text("Pick the day you'll spend. Cards are ranked by how long you get before payment is due.", color = Muted, fontSize = 14.sp, lineHeight = 20.sp)
             Row(
                 Modifier.padding(top = 14.dp).fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(Panel2).clickable { picking = true }.padding(14.dp),

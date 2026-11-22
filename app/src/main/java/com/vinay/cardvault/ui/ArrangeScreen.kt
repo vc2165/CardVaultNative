@@ -68,7 +68,7 @@ fun ArrangeScreen(st: AppState) {
 
     Column(Modifier.fillMaxSize()) {
         TopBar("Arrange cards", onBack = { st.pop() })
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState(), enabled = dragId == null).navigationBarsPadding().padding(horizontal = 16.dp)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState(), enabled = dragId == null, flingBehavior = rememberCalmFling()).navigationBarsPadding().padding(horizontal = 16.dp)) {
             Text("Drag ⠿ or use the arrows. Your order is saved automatically.", color = Muted, fontSize = 14.sp)
             Spacer(Modifier.height(12.dp))
             PanelBox {

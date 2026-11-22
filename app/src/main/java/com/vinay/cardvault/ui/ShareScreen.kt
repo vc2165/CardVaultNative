@@ -72,7 +72,7 @@ fun ShareScreen(st: AppState, id: String) {
 
     Column(Modifier.fillMaxSize()) {
         TopBar("Share card details", onBack = { st.pop() })
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 16.dp)) {
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).navigationBarsPadding().padding(horizontal = 16.dp)) {
             Text("Choose what to include. It's sent as a text message through any app you pick (WhatsApp, SMS, email…).", color = Muted, fontSize = 13.5.sp, lineHeight = 19.sp)
             Spacer(Modifier.height(6.dp))
             ShareOpt(o["card"] == true, { toggle("card") }, "Bank and card name")

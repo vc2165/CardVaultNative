@@ -64,7 +64,7 @@ fun DetailScreen(st: AppState, id: String) {
                 Icon(if (r) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility, if (r) "Hide numbers" else "Show numbers", tint = TextC)
             }
         }
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 16.dp)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).navigationBarsPadding().padding(horizontal = 16.dp)) {
             CardTile(c, revealed = r, showEye = false, onCopyNumber = { st.copy(c.number, true) })
             Spacer(Modifier.height(16.dp))
             PanelBox {

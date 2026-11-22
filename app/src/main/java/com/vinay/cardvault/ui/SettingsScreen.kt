@@ -54,7 +54,7 @@ fun SettingsScreen(st: AppState) {
 
     Column(Modifier.fillMaxSize()) {
         TopBar("Settings", onBack = { st.pop() })
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 16.dp)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).navigationBarsPadding().padding(horizontal = 16.dp)) {
             SectionTitle("Payment reminders")
             PanelBox {
                 Rows {
@@ -228,7 +228,7 @@ fun ChangePasswordScreen(st: AppState) {
 
     Column(Modifier.fillMaxSize()) {
         TopBar("Change password", onBack = { st.pop() })
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().imePadding().padding(horizontal = 16.dp)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState(), flingBehavior = rememberCalmFling()).navigationBarsPadding().imePadding().padding(horizontal = 16.dp)) {
             Field("Current password", p0, { p0 = it; err = "" }, keyboard = pwKb, visual = PasswordVisualTransformation())
             Field("New password", p1, { p1 = it; err = "" }, keyboard = pwKb, visual = PasswordVisualTransformation())
             Field("Confirm new password", p2, { p2 = it; err = "" }, keyboard = pwKb, visual = PasswordVisualTransformation())
