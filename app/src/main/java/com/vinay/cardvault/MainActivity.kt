@@ -91,7 +91,10 @@ class AppState(private val act: MainActivity) {
     val vault: Vault get() = session?.vault ?: Vault()
 
     fun push(r: Route) { stack.add(r) }
-    fun pop() { if (stack.isNotEmpty()) stack.removeAt(stack.size - 1) }
+    /** Set by the screen stack so a pop slides the screen away before removing it. */
+    var animatedPop: (() -> Unit)? = null
+    fun pop() { val a = animatedPop; if (a != null && stack.isNotEmpty()) a() else popNow() }
+    fun popNow() { if (stack.isNotEmpty()) stack.removeAt(stack.size - 1) }
     fun replaceTop(r: Route) { if (stack.isNotEmpty()) stack[stack.size - 1] = r else stack.add(r) }
 
     fun toast(msg: String) {

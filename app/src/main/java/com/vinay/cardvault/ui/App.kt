@@ -1,14 +1,16 @@
 package com.vinay.cardvault.ui
 
-import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -17,14 +19,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.vinay.cardvault.AppState
 import com.vinay.cardvault.Route
-
-private data class Screen(val depth: Int, val route: Route?)
+import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun CardVaultApp(st: AppState) {
@@ -42,25 +54,71 @@ fun CardVaultApp(st: AppState) {
     }
 }
 
+private const val OPEN_MS = 400
+private const val CLOSE_MS = 420
+
+/**
+ * Screens stack on top of Home like Android's own navigation.
+ * A back swipe drags the top screen with your finger; let go and it slides away, or swipe back in to cancel.
+ */
 @Composable
 private fun Main(st: AppState) {
-    BackHandler(enabled = st.stack.isNotEmpty()) { st.pop() }
+    val scope = rememberCoroutineScope()
+    val offsets = remember { mutableStateMapOf<Int, Animatable<Float, AnimationVector1D>>() }
+    var closing by remember { mutableStateOf(false) }
+
+    DisposableEffect(Unit) {
+        st.animatedPop = {
+            val a = offsets[st.stack.lastIndex]
+            if (a == null || closing) st.popNow()
+            else scope.launch {
+                closing = true
+                try { a.animateTo(1f, tween(CLOSE_MS, easing = Ease)) } finally { st.popNow(); closing = false }
+            }
+        }
+        onDispose { st.animatedPop = null }
+    }
+
+    PredictiveBackHandler(enabled = st.stack.isNotEmpty() && !closing) { events ->
+        val a = offsets[st.stack.lastIndex]
+        try {
+            events.collect { e -> a?.snapTo(e.progress * 0.85f) }
+            if (a != null) {
+                closing = true
+                val left = (1f - a.value).coerceIn(0f, 1f)
+                a.animateTo(1f, tween((CLOSE_MS * left).toInt().coerceAtLeast(180), easing = Ease))
+            }
+            st.popNow()
+            closing = false
+        } catch (e: CancellationException) {
+            closing = false
+            if (a != null) scope.launch { a.animateTo(0f, tween(260, easing = Ease)) }
+            throw e
+        }
+    }
+
     Box(Modifier.fillMaxSize()) {
         HomeScreen(st)
-        AnimatedContent(
-            targetState = Screen(st.stack.size, st.stack.lastOrNull()),
-            transitionSpec = {
-                val fwd = targetState.depth > initialState.depth
-                if (fwd) (slideInHorizontally(tween(400, easing = Ease)) { it } + fadeIn(tween(290))) togetherWith
-                    (slideOutHorizontally(tween(400, easing = Ease)) { -it / 5 } + fadeOut(tween(325)))
-                else (slideInHorizontally(tween(400, easing = Ease)) { -it / 5 } + fadeIn(tween(325))) togetherWith
-                    (slideOutHorizontally(tween(360, easing = Ease)) { it } + fadeOut(tween(290)))
-            },
-            contentKey = { it.depth.toString() + it.route.toString() },
-            label = "nav",
-        ) { s ->
-            val r = s.route
-            if (r != null) Box(Modifier.fillMaxSize().background(Bg)) { RouteScreen(st, r) }
+        st.stack.forEachIndexed { i, r ->
+            key(i, r) {
+                val a = remember { Animatable(1f) }
+                DisposableEffect(Unit) {
+                    offsets[i] = a
+                    onDispose { if (offsets[i] === a) offsets.remove(i) }
+                }
+                LaunchedEffect(Unit) { a.animateTo(0f, tween(OPEN_MS, easing = Ease)) }
+                val isTop = i == st.stack.lastIndex
+                Box(
+                    Modifier.fillMaxSize()
+                        .graphicsLayer {
+                            translationX = a.value * size.width
+                            shadowElevation = if (a.value > 0f) 24f else 0f
+                        }
+                        .background(Bg)
+                        // swallow taps so nothing underneath reacts
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, enabled = isTop) {},
+                ) { RouteScreen(st, r) }
+            }
         }
     }
 }
