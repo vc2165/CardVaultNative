@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -165,9 +166,9 @@ private fun Summary(st: AppState) {
     val v = st.vault
     val credit = v.cards.filter { it.type == "credit" }
     if (v.cards.isEmpty()) return
-    Column(Modifier.animateContentSize(tween(380, easing = Ease)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.animateContentSize(tween(340, easing = Ease)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // Stats
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(Modifier.fillMaxWidth().height(androidx.compose.foundation.layout.IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Stat("Credit cards", credit.size.toString(), null, Modifier.weight(1f))
             val lim = v.totalLimit()
             Stat("Total credit limit", if (lim > 0) inr(lim) else "—", if (credit.any { it.limitGroup != null }) "shared limits counted once" else null, Modifier.weight(1f))
@@ -270,10 +271,14 @@ private fun Summary(st: AppState) {
 
 @Composable
 private fun Stat(k: String, value: String, sub: String?, modifier: Modifier) {
-    Column(modifier.clip(RoundedCornerShape(16.dp)).background(Panel).border(1.dp, Line, RoundedCornerShape(16.dp)).padding(14.dp)) {
-        Text(k, color = Muted, fontSize = 12.5.sp)
-        Text(value, color = TextC, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-        if (sub != null) Text(sub, color = Muted, fontSize = 11.sp)
+    Column(
+        modifier.fillMaxHeight().clip(RoundedCornerShape(16.dp)).background(Panel).border(1.dp, Line, RoundedCornerShape(16.dp)).padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        Text(k, color = Muted, fontSize = 12.5.sp, maxLines = 1)
+        Spacer(Modifier.height(2.dp))
+        Text(value, color = TextC, fontSize = 22.sp, fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false)
+        if (sub != null) Text(sub, color = Muted, fontSize = 11.sp, maxLines = 1)
     }
 }
 

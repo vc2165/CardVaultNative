@@ -31,7 +31,7 @@ fun CardVaultApp(st: AppState) {
     Box(Modifier.fillMaxSize().background(Bg)) {
         AnimatedContent(
             targetState = st.session != null,
-            transitionSpec = { fadeIn(tween(420, easing = Ease)) togetherWith fadeOut(tween(280)) },
+            transitionSpec = { fadeIn(tween(380, easing = Ease)) togetherWith fadeOut(tween(250)) },
             label = "lock",
         ) { unlocked ->
             if (unlocked) Main(st) else LockScreen(st)
@@ -51,10 +51,10 @@ private fun Main(st: AppState) {
             targetState = Screen(st.stack.size, st.stack.lastOrNull()),
             transitionSpec = {
                 val fwd = targetState.depth > initialState.depth
-                if (fwd) (slideInHorizontally(tween(440, easing = Ease)) { it } + fadeIn(tween(320))) togetherWith
-                    (slideOutHorizontally(tween(440, easing = Ease)) { -it / 5 } + fadeOut(tween(360)))
-                else (slideInHorizontally(tween(440, easing = Ease)) { -it / 5 } + fadeIn(tween(360))) togetherWith
-                    (slideOutHorizontally(tween(400, easing = Ease)) { it } + fadeOut(tween(320)))
+                if (fwd) (slideInHorizontally(tween(400, easing = Ease)) { it } + fadeIn(tween(290))) togetherWith
+                    (slideOutHorizontally(tween(400, easing = Ease)) { -it / 5 } + fadeOut(tween(325)))
+                else (slideInHorizontally(tween(400, easing = Ease)) { -it / 5 } + fadeIn(tween(325))) togetherWith
+                    (slideOutHorizontally(tween(360, easing = Ease)) { it } + fadeOut(tween(290)))
             },
             contentKey = { it.depth.toString() + it.route.toString() },
             label = "nav",

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -203,14 +204,14 @@ fun VSwitch(checked: Boolean, enabled: Boolean = true, onChange: (Boolean) -> Un
 
 /** Compact dropdown: shows the current choice; tap to pick another. */
 @Composable
-fun <T> Picker(value: T, options: List<Pair<T, String>>, modifier: Modifier = Modifier, onPick: (T) -> Unit) {
+fun <T> Picker(value: T, options: List<Pair<T, String>>, modifier: Modifier = Modifier, minHeight: androidx.compose.ui.unit.Dp = 40.dp, fill: Boolean = false, onPick: (T) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box(modifier) {
         Row(
-            Modifier.clip(RoundedCornerShape(10.dp)).background(Panel2).border(1.dp, Line, RoundedCornerShape(10.dp)).clickable { open = true }.padding(start = 12.dp, end = 6.dp, top = 8.dp, bottom = 8.dp),
+            (if (fill) Modifier.fillMaxWidth() else Modifier).heightIn(min = minHeight).clip(RoundedCornerShape(12.dp)).background(Panel2).border(1.dp, Line, RoundedCornerShape(12.dp)).clickable { open = true }.padding(start = 14.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(options.firstOrNull { it.first == value }?.second ?: "—", color = TextC, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+            Text(options.firstOrNull { it.first == value }?.second ?: "—", color = TextC, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = fill))
             Icon(Icons.Outlined.ExpandMore, null, tint = Muted)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
@@ -224,7 +225,7 @@ fun <T> Picker(value: T, options: List<Pair<T, String>>, modifier: Modifier = Mo
 fun <T> FormPicker(label: String, value: T, options: List<Pair<T, String>>, modifier: Modifier = Modifier, onPick: (T) -> Unit) {
     Column(modifier) {
         Text(label, color = Muted, fontSize = 12.5.sp, modifier = Modifier.padding(start = 2.dp, bottom = 4.dp, top = 10.dp))
-        Picker(value, options, Modifier.fillMaxWidth(), onPick)
+        Picker(value, options, Modifier.fillMaxWidth(), minHeight = 56.dp, fill = true, onPick = onPick)
     }
 }
 
@@ -291,10 +292,21 @@ fun SecondaryButton(text: String, modifier: Modifier = Modifier, color: Color = 
 }
 
 @Composable
-fun ChipButton(text: String, selected: Boolean, onClick: () -> Unit) {
+fun SmallButton(text: String, color: Color = TextC, onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.height(38.dp), shape = RoundedCornerShape(12.dp),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
+        border = BorderStroke(1.dp, if (color == TextC) Line else color.copy(alpha = .5f)),
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = Panel2, contentColor = color)) {
+        Text(text, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+    }
+}
+
+@Composable
+fun ChipButton(text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Text(
         text, color = if (selected) Color.White else TextC, fontSize = 13.5.sp, fontWeight = FontWeight.Medium,
-        modifier = Modifier.clip(RoundedCornerShape(50)).background(if (selected) Accent else Panel2)
+        maxLines = 1, softWrap = false, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        modifier = modifier.clip(RoundedCornerShape(50)).background(if (selected) Accent else Panel2)
             .border(1.dp, if (selected) Accent else Line, RoundedCornerShape(50)).clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 7.dp),
     )

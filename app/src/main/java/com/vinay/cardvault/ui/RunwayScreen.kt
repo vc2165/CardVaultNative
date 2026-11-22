@@ -75,10 +75,10 @@ fun RunwayScreen(st: AppState) {
                 }
                 Text("Change", color = Accent, fontSize = 14.sp)
             }
-            Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(Modifier.fillMaxWidth().padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("Today" to 0L, "Tomorrow" to 1L, "+7 days" to 7L, "+15 days" to 15L).forEach { (t, n) ->
                     val d = today().plusDays(n)
-                    ChipButton(t, p == d) { p = d; st.haptic("tick") }
+                    ChipButton(t, p == d, Modifier.weight(1f)) { p = d; st.haptic("tick") }
                 }
             }
             Spacer(Modifier.height(14.dp))

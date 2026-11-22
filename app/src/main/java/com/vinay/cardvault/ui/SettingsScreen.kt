@@ -90,7 +90,7 @@ fun SettingsScreen(st: AppState) {
                         }
                         row {
                             SetItem("Test notification", "Arrives in about 10 seconds") {
-                                SecondaryButton("Send") { st.testReminder(); st.toast("Test notification in ~10 seconds") }
+                                SmallButton("Send") { st.testReminder(); st.toast("Test notification in ~10 seconds") }
                             }
                         }
                     }
@@ -125,7 +125,7 @@ fun SettingsScreen(st: AppState) {
                         }
                     }
                     row {
-                        SetItem("Change master password") { SecondaryButton("Change") { st.push(Route.ChangePassword) } }
+                        SetItem("Change master password") { SmallButton("Change") { st.push(Route.ChangePassword) } }
                     }
                 }
             }
@@ -135,11 +135,11 @@ fun SettingsScreen(st: AppState) {
                 Rows {
                     row {
                         val last = if (lb > 0) "Last: " + fmtDateYear(Instant.ofEpochMilli(lb).atZone(ZoneId.systemDefault()).toLocalDate()) else "Never backed up"
-                        SetItem("Export encrypted backup", "$last · locked with your master password") { SecondaryButton("Export") { exportBackup(st) } }
+                        SetItem("Export encrypted backup", "$last · locked with your master password") { SmallButton("Export") { exportBackup(st) } }
                     }
                     row {
                         SetItem("Import backup", "Adds cards from a Card Vault backup (old app or this one)") {
-                            SecondaryButton("Import") {
+                            SmallButton("Import") {
                                 st.pickBackup { b ->
                                     if (b == null) return@pickBackup
                                     if (!VaultCrypto.isBackup(b)) { st.toast("Not a Card Vault backup"); return@pickBackup }
@@ -154,7 +154,7 @@ fun SettingsScreen(st: AppState) {
             SectionTitle("Danger zone")
             PanelBox {
                 SetItem("Erase everything", "Deletes all cards from this phone", titleColor = Danger) {
-                    SecondaryButton("Erase", color = Danger) { wipeText = ""; wipe = true }
+                    SmallButton("Erase", color = Danger) { wipeText = ""; wipe = true }
                 }
             }
             Text(
