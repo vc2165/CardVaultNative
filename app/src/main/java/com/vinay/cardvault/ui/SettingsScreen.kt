@@ -101,7 +101,7 @@ fun SettingsScreen(st: AppState) {
             PanelBox {
                 SetItem("Vibration", "Feedback on taps, copy and unlock") {
                     Picker(st.haptics, listOf("off" to "Off", "subtle" to "Subtle", "light" to "Light", "medium" to "Medium")) {
-                        st.setHaptics(it); st.haptic("success")
+                        st.changeHaptics(it); st.haptic("success")
                         st.toast(if (it == "off") "Vibration off" else "Vibration: ${it.replaceFirstChar { ch -> ch.uppercase() }}")
                     }
                 }
@@ -121,7 +121,7 @@ fun SettingsScreen(st: AppState) {
                     }
                     row {
                         SetItem("Auto-lock after", "Also locks 30s after you leave the app") {
-                            Picker(st.autolock, listOf(1, 3, 5, 10).map { it to "$it min" }) { st.setAutolock(it); st.toast("Saved") }
+                            Picker(st.autolock, listOf(1, 3, 5, 10).map { it to "$it min" }) { st.changeAutolock(it); st.toast("Saved") }
                         }
                     }
                     row {

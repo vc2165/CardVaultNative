@@ -169,8 +169,8 @@ class AppState(private val act: MainActivity) {
 
     /* ---------- settings ---------- */
 
-    fun setHaptics(v: String) { haptics = v; prefs.haptics = v }
-    fun setAutolock(v: Int) { autolock = v; prefs.autolock = v; bump() }
+    fun changeHaptics(v: String) { haptics = v; prefs.haptics = v }
+    fun changeAutolock(v: Int) { autolock = v; prefs.autolock = v; bump() }
     fun setReminderPrefs(on: Boolean = remindOn, stmt: Boolean = statement, before: Int = daysBefore, day: Boolean = onDay, h: Int = hour) {
         remindOn = on; statement = stmt; daysBefore = before; onDay = day; hour = h
         prefs.remindOn = on; prefs.statement = stmt; prefs.daysBefore = before; prefs.onDay = day; prefs.hour = h
