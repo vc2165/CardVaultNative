@@ -120,7 +120,7 @@ fun SettingsScreen(st: AppState) {
                         }
                     }
                     row {
-                        SetItem("Auto-lock after", "Also locks 30s after you leave the app") {
+                        SetItem("Auto-lock after", "When you're inactive in the app. It also locks the moment you leave it") {
                             Picker(st.autolock, listOf(1, 3, 5, 10).map { it to "$it min" }) { st.changeAutolock(it); st.toast("Saved") }
                         }
                     }

@@ -275,18 +275,22 @@ class MainActivity : FragmentActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
+    // Locks the moment you leave the app (home, recent apps, screen off), except while
+    // Card Vault itself has opened a file picker, the share sheet or a permission prompt.
     override fun onStop() {
         super.onStop()
         hiddenAt = SystemClock.elapsedRealtime()
+        if (!picking && state.session != null) {
+            state.lock()
+            state.showPasswordForm = false
+            state.lockMessage = ""
+        }
     }
 
     override fun onStart() {
         super.onStart()
         if (hiddenAt == 0L || picking) return
-        val away = SystemClock.elapsedRealtime() - hiddenAt > 30_000
-        if (!away) return
-        if (state.session != null) state.lock()
-        if (state.file.exists() && state.bio && !state.showPasswordForm) handler.postDelayed({ bioUnlock() }, 300)
+        if (state.session == null && state.file.exists() && state.bio && !state.showPasswordForm) handler.postDelayed({ bioUnlock() }, 300)
     }
 
     /* ---------- haptics ---------- */

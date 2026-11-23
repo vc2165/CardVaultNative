@@ -45,6 +45,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -66,16 +71,37 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Logo(size: Int = 84) {
+    // Same picture as the app icon: fanned cards with a shield, on purple
     Canvas(Modifier.size(size.dp)) {
-        val s = this.size.width / 512f
-        drawRoundRect(Color(0xFF161A22), cornerRadius = CornerRadius(112 * s))
+        val s = this.size.width / 72f
+        fun o(x: Float, y: Float) = Offset((x - 18f) * s, (y - 18f) * s)
         drawRoundRect(
-            Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFF22C3A6)), Offset(96 * s, 150 * s), Offset(416 * s, 362 * s)),
-            topLeft = Offset(96 * s, 150 * s), size = Size(320 * s, 212 * s), cornerRadius = CornerRadius(28 * s),
+            Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFF4B2BB8)), Offset.Zero, Offset(this.size.width, this.size.height)),
+            cornerRadius = CornerRadius(18 * s),
         )
-        drawRect(Color(0x8C0E1116), topLeft = Offset(96 * s, 196 * s), size = Size(320 * s, 40 * s))
-        drawRoundRect(Color(0xFFF5D77A), topLeft = Offset(128 * s, 276 * s), size = Size(70 * s, 50 * s), cornerRadius = CornerRadius(10 * s))
-        drawRoundRect(Color(0xCCFFFFFF), topLeft = Offset(232 * s, 296 * s), size = Size(150 * s, 14 * s), cornerRadius = CornerRadius(7 * s))
+        val pivot = o(51f, 56f)
+        fun card(deg: Float, color: Color, front: Boolean) = rotate(deg, pivot) {
+            drawRoundRect(color, topLeft = o(31f, 42f), size = Size(40 * s, 26 * s), cornerRadius = CornerRadius(4 * s))
+            if (front) {
+                drawRect(Color(0xD95B2FC4), topLeft = o(31f, 47f), size = Size(40 * s, 4.6f * s))
+                drawRoundRect(Color(0xFFF5D77A), topLeft = o(35f, 56f), size = Size(8.5f * s, 6 * s), cornerRadius = CornerRadius(1.2f * s))
+            }
+        }
+        card(-14f, Color(0xFFF5B94A), false)
+        card(-5f, Color(0xFF22C3A6), false)
+        card(5f, Color.White, true)
+        fun X(x: Float) = (x - 18f) * s
+        fun Y(y: Float) = (y - 18f) * s
+        val shield = Path().apply {
+            moveTo(X(69f), Y(55.5f)); lineTo(X(78f), Y(58.7f)); lineTo(X(78f), Y(65.1f))
+            cubicTo(X(78f), Y(71f), X(74f), Y(75.3f), X(69f), Y(77.5f))
+            cubicTo(X(64f), Y(75.3f), X(60f), Y(71f), X(60f), Y(65.1f))
+            lineTo(X(60f), Y(58.7f)); close()
+        }
+        drawPath(shield, Color.White)
+        drawPath(shield, Color(0xFF4B2BB8), style = Stroke(1.6f * s))
+        val tick = Path().apply { moveTo(X(65.2f), Y(66.2f)); lineTo(X(67.9f), Y(68.9f)); lineTo(X(72.9f), Y(63.7f)) }
+        drawPath(tick, Color(0xFF5B2FC4), style = Stroke(2f * s, cap = StrokeCap.Round, join = StrokeJoin.Round))
     }
 }
 
